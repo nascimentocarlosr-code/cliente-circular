@@ -94,7 +94,7 @@ def run_query(query, params=()):
 # --- 3. APLICATIVO PRINCIPAL ---
 def main_app():
     apply_custom_css()
-    st.markdown("<h3 style='text-align: center;'>👗 Cliente Circular</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>♻️ Cliente Circular</h3>", unsafe_allow_html=True)
     
     # Abas representadas por Emojis para máximo espaço no mobile
     tabs = st.tabs(["🏠", "👥", "👕", "💰", "📊", "⚙️"])
@@ -197,7 +197,7 @@ def main():
         st.session_state.logged_in = False
     if not st.session_state.logged_in:
         apply_custom_css()
-        st.markdown("<h2 style='text-align: center;'>👗 Cliente Circular</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>♻️ Cliente Circular</h2>", unsafe_allow_html=True)
         u = st.text_input("Usuário")
         p = st.text_input("Senha", type='password')
         if st.button("Entrar"):
@@ -216,3 +216,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
