@@ -168,7 +168,7 @@ def main_app():
         """)
         if not df_m.empty:
             for _, row in df_m.iterrows():
-                msg = f"Oi {row['nome']}, tudo bem? Aqui é do brechó Mercatudo e gostaria de te avisar que chegou {row['nome_peca']} Tam {row['tamanho']}. Gostaria que eu te enviasse um foto?"
+                msg = f"Oi {row['nome']}, tudo bem? Aqui é do *brechó Mercatudo* e gostaria de te avisar que chegou {row['nome_peca']} Tam {row['tamanho']}. Gostaria que eu te enviasse um foto?"
                 link = f"https://wa.me/{row['whatsapp']}?text={msg.replace(' ', '%20')}"
                 st.info(f"🎯 **{row['nome']}** veste **{row['nome_peca']}**")
                 st.markdown(f"[📲 Enviar WhatsApp]({link})")
@@ -216,4 +216,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
