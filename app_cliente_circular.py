@@ -40,7 +40,6 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT, nome_peca TEXT, tamanho TEXT, 
             genero_peca TEXT, valor REAL, data_entrada TEXT, status TEXT DEFAULT "Disponível")''')
         c.execute('CREATE TABLE IF NOT EXISTS vendas (id INTEGER PRIMARY KEY AUTOINCREMENT, id_cliente INTEGER, id_peca INTEGER, data_venda TEXT, valor_final REAL)')
-        
         c.execute("SELECT * FROM usuarios WHERE username = 'admin'")
         if not c.fetchone():
             c.execute("INSERT INTO usuarios VALUES (?,?)", ('admin', make_hashes('admin123')))
@@ -59,54 +58,62 @@ def run_query(query, params=()):
 # --- 3. APLICATIVO PRINCIPAL ---
 def main_app():
     apply_custom_css()
-    st.markdown("<h2 style='text-align: center;'>♻️ Cliente Circular</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;'>👗 Cliente Circular</h2>", unsafe_allow_html=True)
     
     tabs = st.tabs(["🏠 Início", "👥 Clientes", "👕 Estoque", "💰 Vendas", "📊 Insights", "⚙️ Ajustes"])
 
-    # --- ABA INÍCIO ---
     with tabs[0]:
         st.subheader(f"Olá, {st.session_state.username}")
         v_df = get_data("SELECT valor_final FROM vendas")
         rec = v_df['valor_final'].sum() if not v_df.empty else 0.0
         st.metric("Receita Bruta", f"R$ {rec:,.2f}")
-        
-        st.write("---")
-        if st.button("Encerrar Sessão (Sair)"):
+        if st.button("Sair"):
             st.session_state.logged_in = False
             st.rerun()
 
-    # --- ABA CLIENTES ---
     with tabs[1]:
-        st.subheader("Cadastro de Clientes")
+        st.subheader("Clientes")
         with st.form("f_cli", clear_on_submit=True):
             n = st.text_input("Nome")
-            w = st.text_input("WhatsApp (Ex: 5511999998888)")
+            w = st.text_input("WhatsApp")
             t = st.selectbox("Tamanho", ["PP", "P", "M", "G", "GG", "G1", "G2", "G3"])
             g = st.radio("Interesse em:", ["Feminino", "Masculino", "Ambos"], horizontal=True)
-            if st.form_submit_button("Salvar Cliente"):
+            if st.form_submit_button("Salvar"):
                 run_query("INSERT INTO clientes (nome, whatsapp, tamanho_roupa, interesse_genero) VALUES (?,?,?,?)", (n, w, t, g))
-                st.success("Cliente cadastrado!")
+                st.success("Salvo!")
                 st.rerun()
-        st.dataframe(get_data("SELECT nome, whatsapp, tamanho_roupa, interesse_genero FROM clientes"), use_container_width=True)
+        st.dataframe(get_data("SELECT * FROM clientes"), use_container_width=True)
 
-    # --- ABA ESTOQUE ---
     with tabs[2]:
-        st.subheader("Entrada de Peças")
+        st.subheader("Estoque")
         with st.form("f_est", clear_on_submit=True):
             np = st.text_input("Peça")
-            tp = st.selectbox("Tamanho", ["PP", "P", "M", "G", "GG", "G1", "G2", "G3"])
+            tp = st.selectbox("Tamanho", ["PP", "P", "M", "G", "GG", "G1", "G2", "G3"], key="est_t")
             gp = st.radio("Gênero da Peça:", ["Feminino", "Masculino", "Unissex"], horizontal=True)
             vp = st.number_input("Preço", min_value=0.0)
             if st.form_submit_button("Adicionar"):
                 hoje = datetime.now().strftime("%Y-%m-%d")
                 run_query("INSERT INTO estoque (nome_peca, tamanho, genero_peca, valor, data_entrada) VALUES (?,?,?,?,?)", (np, tp, gp, vp, hoje))
-                st.success("Estoque atualizado!")
+                st.success("Adicionado!")
                 st.rerun()
-        st.dataframe(get_data("SELECT nome_peca, tamanho, genero_peca, valor FROM estoque WHERE status='Disponível'"), use_container_width=True)
+        st.dataframe(get_data("SELECT * FROM estoque WHERE status='Disponível'"), use_container_width=True)
 
-    # --- ABA VENDAS ---
     with tabs[3]:
-        st.subheader("Registrar Venda")
+        st.subheader("Vendas")
         clis = get_data("SELECT id, nome FROM clientes")
         pecs = get_data("SELECT id, nome_peca, valor FROM estoque WHERE status='Disponível'")
-        if not clis.empty and not pecs.
+        # CORREÇÃO DA LINHA 112:
+        if not clis.empty and not pecs.empty:
+            with st.form("f_ven"):
+                sel_c = st.selectbox("Cliente", clis['nome'])
+                sel_p = st.selectbox("Peça", pecs['nome_peca'])
+                if st.form_submit_button("Vender"):
+                    c_id = int(clis[clis['nome'] == sel_c]['id'].iloc[0])
+                    p_row = pecs[pecs['nome_peca'] == sel_p].iloc[0]
+                    hoje = datetime.now().strftime("%Y-%m-%d")
+                    run_query("INSERT INTO vendas (id_cliente, id_peca, data_venda, valor_final) VALUES (?,?,?,?)", (c_id, int(p_row['id']), hoje, float(p_row['valor'])))
+                    run_query("UPDATE estoque SET status='Vendido' WHERE id=?", (int(p_row['id']),))
+                    st.success("Vendido!")
+                    st.rerun()
+        else:
+            st
