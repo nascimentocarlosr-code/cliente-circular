@@ -235,11 +235,11 @@ with tab1:
     with col1:
         if st.button("➕ Novo Cliente", use_container_width=True):
             st.session_state.current_tab = "Clientes"
-            st.experimental_rerun() # Força a atualização para ir para a aba
+            st.rerun() # Força a atualização para ir para a aba
     with col2:
         if st.button("📦 Nova Peça", use_container_width=True):
             st.session_state.current_tab = "Estoque"
-            st.experimental_rerun()
+            st.rerun()
 
 with tab2:
     st.header("👥 Clientes")
@@ -257,7 +257,7 @@ with tab2:
             if submit_cliente:
                 add_cliente(nome, whatsapp, genero_interesse, tamanho_roupa, tamanho_calcado, categorias_favoritas)
                 st.success("Cliente cadastrado com sucesso!")
-                st.experimental_rerun() # Recarrega a página para mostrar o novo cliente
+                st.rerun() # Recarrega a página para mostrar o novo cliente
 
     st.subheader("Clientes Cadastrados")
     clientes_df = get_all_clientes()
@@ -304,7 +304,7 @@ with tab3:
             if submit_peca:
                 add_peca(nome_peca, tamanho_peca, categoria_peca, valor_peca)
                 st.success("Peça cadastrada com sucesso!")
-                st.experimental_rerun()
+                st.rerun()
 
     st.subheader("Estoque Atual")
     estoque_df = get_all_pecas()
@@ -347,7 +347,7 @@ with tab4:
                 if peca_id_selecionada:
                     registrar_venda(cliente_id, peca_id_selecionada, valor_final_venda)
                     st.success("Venda registrada e peça removida do estoque disponível!")
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.error("Por favor, selecione uma peça disponível.")
     else:
@@ -411,3 +411,4 @@ with tab5:
 # Para rodar, salve este código como um arquivo .py (ex: app_cliente_circular.py)
 # Abra o terminal na pasta onde salvou e digite:
 # streamlit run app_cliente_circular.py
+
