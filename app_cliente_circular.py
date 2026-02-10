@@ -78,7 +78,7 @@ def init_db():
         
         c.execute("SELECT * FROM usuarios WHERE username = 'admin'")
         if not c.fetchone():
-            c.execute("INSERT INTO usuarios VALUES (?,?)", ('admin', make_hashes('admin123')))
+            c.execute("INSERT INTO usuarios VALUES (?,?)", ('admin', make_hashes('ver.beta376@')))
         conn.commit()
 
 def get_data(query):
@@ -216,4 +216,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
