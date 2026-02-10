@@ -159,7 +159,7 @@ def main():
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
     if not st.session_state.logged_in:
-        st.markdown("<h2 style='text-align: center;'>👗 Cliente Circular</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>♻️ Cliente Circular</h2>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
             u = st.text_input("Usuário")
