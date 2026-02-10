@@ -157,22 +157,35 @@ def main_app():
         else:
             st.warning("Cadastre dados primeiro.")
 
-    # INSIGHTS
+    # --- ABA INSIGHTS (Aba 4) ---
     with tabs[4]:
-        st.subheader("Matches Zap")
-        df_m = get_data("""
-            SELECT c.nome, c.whatsapp, e.nome_peca, e.valor, e.tamanho, e.genero_peca
+        st.subheader("Sugestões de Hoje")
+        query = """
+            SELECT c.nome, c.whatsapp, e.nome_peca, e.valor, e.tamanho, e.foto 
             FROM clientes c JOIN estoque e ON c.tamanho_roupa = e.tamanho 
-            WHERE e.status = 'Disponível'
+            WHERE e.status = 'Disponível' 
             AND (c.interesse_genero = e.genero_peca OR c.interesse_genero = 'Ambos' OR e.genero_peca = 'Unissex')
-        """)
+        """
+        df_m = get_data(query)
         if not df_m.empty:
             for _, row in df_m.iterrows():
-                msg = f"Oi {row['nome']}, tudo bem? Aqui é do Brechó Mercatudo, e gostaria de te avisar que chegou {row['nome_peca']} Tam {row['tamanho']} por R$ {row['valor']}. Gostaria que eu te enviasse algumas fotos?"
-                link = f"https://wa.me/{row['whatsapp']}?text={msg.replace(' ', '%20')}"
-                st.info(f"🎯 **{row['nome']}** veste **{row['nome_peca']}**")
-                st.markdown(f"[📲 Enviar WhatsApp]({link})")
-                st.divider()
+                with st.container():
+                    col_img, col_txt = st.columns([1, 2])
+                    if row['foto']:
+                        col_img.image(base64_to_image(row['foto']), use_container_width=True)
+                    else:
+                        col_img.write("🚫 S/ Foto")
+                    
+                    # --- LÓGICA DE FORMATAÇÃO PARA O WHATSAPP ---
+                    # 1. Formata com 2 casas decimais e ponto como milhar: 1500.5 -> "1.500,50"
+                    valor_reais = f"{row['valor']:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+                    
+                    msg = f"Oi {row['nome']}, chegou {row['nome_peca']} Tam {row['tamanho']} por R$ {valor_reais}. Reservar?"
+                    link = f"https://wa.me/{row['whatsapp']}?text={msg.replace(' ', '%20')}"
+                    
+                    col_txt.write(f"**{row['nome']}** veste **{row['nome_peca']}**")
+                    col_txt.markdown(f"[📲 Enviar Zap]({link})")
+                    st.divider()
         else:
             st.info("Sem matches.")
 
@@ -216,6 +229,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 
