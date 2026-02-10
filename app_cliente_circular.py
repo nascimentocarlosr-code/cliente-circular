@@ -69,7 +69,7 @@ def run_query(query, params=()):
 # --- 3. APLICATIVO PRINCIPAL ---
 def main_app():
     apply_custom_css()
-    st.markdown("<h2 style='text-align: center;'>👗 Cliente Circular</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;'>♻️ Cliente Circular</h2>", unsafe_allow_html=True)
     
     tabs = st.tabs(["🏠 Início", "👥 Clientes", "👕 Estoque", "💰 Vendas", "📊 Insights"])
 
@@ -180,3 +180,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
