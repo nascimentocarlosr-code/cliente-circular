@@ -78,7 +78,7 @@ def init_db():
         
         c.execute("SELECT * FROM usuarios WHERE username = 'admin'")
         if not c.fetchone():
-            c.execute("INSERT INTO usuarios VALUES (?,?)", ('admin', make_hashes('ver.beta376@')))
+            c.execute("INSERT INTO usuarios VALUES (?,?)", ('admin', make_hashes('admin123')))
         conn.commit()
 
 def get_data(query):
@@ -157,7 +157,7 @@ def main_app():
         else:
             st.warning("Cadastre dados primeiro.")
 
-   # INSIGHTS
+    # INSIGHTS
     with tabs[4]:
         st.subheader("Matches Zap")
         df_m = get_data("""
@@ -168,24 +168,11 @@ def main_app():
         """)
         if not df_m.empty:
             for _, row in df_m.iterrows():
-                msg = f"Oi {row['nome']}, chegou {row['nome_peca']} Tam {row['tamanho']} por R$ {row['valor']}. Reservar?"
+                msg = f"Oi {row['nome']}, tudo bem? Aqui é do brechó Mercatudo e gostaria de te avisar que chegou {row['nome_peca']} Tam {row['tamanho']}. Gostaria que eu te enviasse um foto?"
                 link = f"https://wa.me/{row['whatsapp']}?text={msg.replace(' ', '%20')}"
                 st.info(f"🎯 **{row['nome']}** veste **{row['nome_peca']}**")
                 st.markdown(f"[📲 Enviar WhatsApp]({link})")
                 st.divider()
-        else:
-            st.info("Sem matches.")
-                    
-                    # --- LÓGICA DE FORMATAÇÃO PARA O WHATSAPP ---
-                    # 1. Formata com 2 casas decimais e ponto como milhar: 1500.5 -> "1.500,50"
-                    valor_reais = f"{row['valor']:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-                    
-                    msg = f"Oi {row['nome']}, chegou {row['nome_peca']} Tam {row['tamanho']} por R$ {valor_reais}. Reservar?"
-                    link = f"https://wa.me/{row['whatsapp']}?text={msg.replace(' ', '%20')}"
-                    
-                    col_txt.write(f"**{row['nome']}** veste **{row['nome_peca']}**")
-                    col_txt.markdown(f"[📲 Enviar Zap]({link})")
-                    st.divider()
         else:
             st.info("Sem matches.")
 
@@ -229,8 +216,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
